@@ -30,8 +30,8 @@ if uploaded_file:
             result = response.json()
 
             # Debug anzeigen (optional)
-            # st.subheader("Rohdaten (Debug)")
-            # st.json(result)
+            st.subheader("Rohdaten (Debug)")
+            st.json(result)
 
             predictions = []
             if isinstance(result, list):
