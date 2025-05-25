@@ -1,13 +1,8 @@
 
 import streamlit as st
+import base64
+from inference_sdk import InferenceHTTPClient
 
-try:
-    import cv2
-    st.success("cv2 wurde erfolgreich geladen.")
-    
-except ImportError as e:
-    st.error("OpenCV konnte nicht geladen werden.")
-    st.exception(e)
 st.set_page_config(page_title="Schlüssel-AI", layout="centered")
 
 st.title("Schlüssel-AI: Erkenne deinen Schlüsseltyp")
@@ -19,6 +14,9 @@ if uploaded_file:
     image_bytes = uploaded_file.read()
     st.image(image_bytes, caption="Hochgeladenes Bild", use_column_width=True)
 
+    # Bild in Base64 umwandeln
+    image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+
     with st.spinner("Analyse läuft..."):
         try:
             client = InferenceHTTPClient(
@@ -29,7 +27,7 @@ if uploaded_file:
             result = client.run_workflow(
                 workspace_name="moritz-b",
                 workflow_id="custom-workflow-6",
-                images={"image": image_bytes},
+                images={"image": image_base64},
                 use_cache=True
             )
 
