@@ -1,4 +1,2 @@
 streamlit
-numpy
-opencv-python-headless==4.7.0.72
-git+https://github.com/roboflow/inference.git
+requests
