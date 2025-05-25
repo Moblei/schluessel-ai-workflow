@@ -14,30 +14,41 @@ if uploaded_file:
     image_bytes = uploaded_file.read()
     st.image(image_bytes, caption="Hochgeladenes Bild", use_container_width=True)
 
-    image_base64 = base64.b64encode(image_bytes).decode("utf-8")
-
-    with st.spinner("Analyse läuft..."):
+    with st.spinner("Bild wird vorbereitet..."):
         try:
-            api_url = "https://infer.roboflow.com/moritz-b/custom-workflow-6"
+            # Schritt 1: Bild bei Roboflow hochladen
+            upload_url = "https://detect.roboflow.com/moritz-b/1"
             api_key = st.secrets["API_KEY"]
 
-            response = requests.post(
-                url=f"{api_url}?api_key={api_key}",
-                json={"image": image_base64}
+            response_upload = requests.post(
+                url=f"{upload_url}?api_key={api_key}",
+                files={"file": image_bytes},
             )
 
-            # Fehlerbehandlung: wenn Response leer oder kein JSON
-            try:
-                result = response.json()
-            except Exception:
-                st.error("Roboflow hat keine gültige Antwort zurückgegeben.")
-                st.text(f"Status: {response.status_code}")
-                st.text(response.text)
+            if response_upload.status_code != 200:
+                st.error("Fehler beim Hochladen des Bildes zu Roboflow.")
+                st.text(response_upload.text)
                 st.stop()
 
+            upload_result = response_upload.json()
+            image_url = upload_result.get("image", {}).get("url")
+
+            if not image_url:
+                st.error("Fehler beim Abrufen der Bild-URL.")
+                st.json(upload_result)
+                st.stop()
+
+            # Schritt 2: Bild-URL an Workflow senden (GET)
+            workflow_url = "https://infer.roboflow.com/moritz-b/custom-workflow-6"
+            response = requests.get(
+                url=f"{workflow_url}?api_key={api_key}&image={image_url}"
+            )
+
+            result = response.json()
+
             # Debug (optional)
-            st.subheader("Rohdaten (Debug)")
-            st.json(result)
+            # st.subheader("Rohdaten (Debug)")
+            # st.json(result)
 
             predictions = []
             if isinstance(result, list):
@@ -56,5 +67,5 @@ if uploaded_file:
                 st.warning("Keine Vorhersage erhalten. Bitte versuche ein anderes Bild.")
 
         except Exception as e:
-            st.error("Fehler bei der Anfrage an Roboflow.")
+            st.error("Fehler bei der Verarbeitung.")
             st.exception(e)
