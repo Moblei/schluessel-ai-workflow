@@ -16,8 +16,8 @@ if uploaded_file:
 
     with st.spinner("Bild wird vorbereitet..."):
         try:
-            # Schritt 1: Bild bei Roboflow hochladen
-            upload_url = "https://detect.roboflow.com/moritz-b/1"
+            # Korrekte Upload-URL für dein Dataset
+            upload_url = "https://detect.roboflow.com/schluessel_ai_classification_2/1"
             api_key = st.secrets["API_KEY"]
 
             response_upload = requests.post(
