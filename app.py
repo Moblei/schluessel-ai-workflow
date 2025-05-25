@@ -2,7 +2,6 @@
 import streamlit as st
 import base64
 import requests
-import urllib.parse
 
 st.set_page_config(page_title="Schlüssel-AI", layout="centered")
 
@@ -15,22 +14,28 @@ if uploaded_file:
     image_bytes = uploaded_file.read()
     st.image(image_bytes, caption="Hochgeladenes Bild", use_container_width=True)
 
-    # Bild in Base64 umwandeln und URL-encoden
     image_base64 = base64.b64encode(image_bytes).decode("utf-8")
-    image_base64_encoded = urllib.parse.quote_plus(image_base64)
 
     with st.spinner("Analyse läuft..."):
         try:
             api_url = "https://infer.roboflow.com/moritz-b/custom-workflow-6"
             api_key = st.secrets["API_KEY"]
 
-            response = requests.get(
-                url=f"{api_url}?api_key={api_key}&image={image_base64_encoded}"
+            response = requests.post(
+                url=f"{api_url}?api_key={api_key}",
+                json={"image": image_base64}
             )
 
-            result = response.json()
+            # Fehlerbehandlung: wenn Response leer oder kein JSON
+            try:
+                result = response.json()
+            except Exception:
+                st.error("Roboflow hat keine gültige Antwort zurückgegeben.")
+                st.text(f"Status: {response.status_code}")
+                st.text(response.text)
+                st.stop()
 
-            # Debug anzeigen (optional)
+            # Debug (optional)
             # st.subheader("Rohdaten (Debug)")
             # st.json(result)
 
