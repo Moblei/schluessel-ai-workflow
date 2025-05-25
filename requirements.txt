@@ -1,4 +1,4 @@
-opencv-python-headless
-inference-sdk
+opencv-python-headless==4.7.0.72
+inference-sdk @ git+https://github.com/roboflow/inference.git
 streamlit
 Pillow
