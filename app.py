@@ -2,6 +2,7 @@
 import streamlit as st
 import base64
 import requests
+import urllib.parse
 
 st.set_page_config(page_title="Schlüssel-AI", layout="centered")
 
@@ -14,24 +15,24 @@ if uploaded_file:
     image_bytes = uploaded_file.read()
     st.image(image_bytes, caption="Hochgeladenes Bild", use_container_width=True)
 
-    # Bild in Base64 umwandeln
+    # Bild in Base64 umwandeln und URL-encoden
     image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+    image_base64_encoded = urllib.parse.quote_plus(image_base64)
 
     with st.spinner("Analyse läuft..."):
         try:
             api_url = "https://infer.roboflow.com/moritz-b/custom-workflow-6"
             api_key = st.secrets["API_KEY"]
 
-            response = requests.post(
-                url=f"{api_url}?api_key={api_key}",
-                json={"image": image_base64}
+            response = requests.get(
+                url=f"{api_url}?api_key={api_key}&image={image_base64_encoded}"
             )
 
             result = response.json()
 
             # Debug anzeigen (optional)
-            st.subheader("Rohdaten (Debug)")
-            st.json(result)
+            # st.subheader("Rohdaten (Debug)")
+            # st.json(result)
 
             predictions = []
             if isinstance(result, list):
