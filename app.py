@@ -36,8 +36,8 @@ if uploaded_file:
                 st.stop()
 
             # Debug (optional)
-            # st.subheader("Rohdaten (Debug)")
-            # st.json(result)
+            st.subheader("Rohdaten (Debug)")
+            st.json(result)
 
             predictions = []
             if isinstance(result, list):
