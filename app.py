@@ -1,7 +1,13 @@
 
 import streamlit as st
-from inference_sdk import InferenceHTTPClient
 
+try:
+    import cv2
+    st.success("cv2 wurde erfolgreich geladen.")
+    
+except ImportError as e:
+    st.error("OpenCV konnte nicht geladen werden.")
+    st.exception(e)
 st.set_page_config(page_title="Schlüssel-AI", layout="centered")
 
 st.title("Schlüssel-AI: Erkenne deinen Schlüsseltyp")
