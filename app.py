@@ -12,7 +12,7 @@ uploaded_file = st.file_uploader("Bild auswählen", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
     image_bytes = uploaded_file.read()
-    st.image(image_bytes, caption="Hochgeladenes Bild", use_column_width=True)
+    st.image(image_bytes, caption="Hochgeladenes Bild", use_container_width=True)
 
     # Bild in Base64 umwandeln
     image_base64 = base64.b64encode(image_bytes).decode("utf-8")
@@ -28,7 +28,19 @@ if uploaded_file:
             )
 
             result = response.json()
-            predictions = result.get("predictions", [])
+
+            # Optional: Debug anzeigen
+            # st.subheader("Rohdaten (Debug)")
+            # st.json(result)
+
+            # Predictions auslesen – egal ob Liste oder einzelnes Dict
+            predictions = []
+            if isinstance(result, list):
+                if len(result) > 0 and "predictions" in result[0]:
+                    predictions = result[0]["predictions"]
+            elif "predictions" in result:
+                predictions = result["predictions"]
+
             if predictions:
                 top_prediction = predictions[0]
                 st.success(f"Erkannt: **{top_prediction['class']}** mit {round(top_prediction['confidence'] * 100, 2)}% Sicherheit")
