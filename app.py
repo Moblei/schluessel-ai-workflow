@@ -30,8 +30,8 @@ if uploaded_file:
             result = response.json()
 
             # Optional: Debug anzeigen
-            # st.subheader("Rohdaten (Debug)")
-            # st.json(result)
+            st.subheader("Rohdaten (Debug)")
+            st.json(result)
 
             # Predictions auslesen – egal ob Liste oder einzelnes Dict
             predictions = []
