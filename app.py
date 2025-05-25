@@ -29,11 +29,10 @@ if uploaded_file:
 
             result = response.json()
 
-            # Optional: Debug anzeigen
-            st.subheader("Rohdaten (Debug)")
-            st.json(result)
+            # Debug anzeigen (optional)
+            # st.subheader("Rohdaten (Debug)")
+            # st.json(result)
 
-            # Predictions auslesen – egal ob Liste oder einzelnes Dict
             predictions = []
             if isinstance(result, list):
                 if len(result) > 0 and "predictions" in result[0]:
@@ -41,11 +40,14 @@ if uploaded_file:
             elif "predictions" in result:
                 predictions = result["predictions"]
 
-            if predictions:
+            if predictions and len(predictions) > 0:
                 top_prediction = predictions[0]
-                st.success(f"Erkannt: **{top_prediction['class']}** mit {round(top_prediction['confidence'] * 100, 2)}% Sicherheit")
+                confidence = round(top_prediction['confidence'] * 100, 2)
+                st.success(f"Erkannt: **{top_prediction['class']}** mit {confidence}% Sicherheit")
+                if confidence < 60:
+                    st.info("Hinweis: Die Erkennung war unsicher. Bildqualität oder Perspektive prüfen.")
             else:
-                st.warning("Keine zuverlässige Vorhersage möglich. Bitte versuche ein anderes Bild.")
+                st.warning("Keine Vorhersage erhalten. Bitte versuche ein anderes Bild.")
 
         except Exception as e:
             st.error("Fehler bei der Anfrage an Roboflow.")
