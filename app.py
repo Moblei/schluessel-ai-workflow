@@ -17,7 +17,7 @@ if uploaded_file:
         try:
             client = InferenceHTTPClient(
                 api_url="https://infer.roboflow.com",
-                api_key=st.secrets["ROBOFLOW_API_KEY"]
+                api_key=st.secrets["JVv6sT45apmdOuYNBbnE"]
             )
 
             result = client.run_workflow(
