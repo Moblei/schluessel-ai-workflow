@@ -1,7 +1,7 @@
 
 import streamlit as st
 import base64
-from inference_sdk import InferenceHTTPClient
+import requests
 
 st.set_page_config(page_title="Schlüssel-AI", layout="centered")
 
@@ -19,18 +19,15 @@ if uploaded_file:
 
     with st.spinner("Analyse läuft..."):
         try:
-            client = InferenceHTTPClient(
-                api_url="https://infer.roboflow.com",
-                api_key=st.secrets["API_KEY"]
+            api_url = "https://infer.roboflow.com/moritz-b/custom-workflow-6"
+            api_key = st.secrets["API_KEY"]
+
+            response = requests.post(
+                url=f"{api_url}?api_key={api_key}",
+                json={"image": image_base64}
             )
 
-            result = client.run_workflow(
-                workspace_name="moritz-b",
-                workflow_id="custom-workflow-6",
-                images={"image": image_base64},
-                use_cache=True
-            )
-
+            result = response.json()
             predictions = result.get("predictions", [])
             if predictions:
                 top_prediction = predictions[0]
