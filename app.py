@@ -16,7 +16,7 @@ if uploaded_file:
 
     with st.spinner("Bild wird vorbereitet..."):
         try:
-            # Korrekte Upload-URL für dein Dataset
+            # Upload zur Roboflow Dataset API
             upload_url = "https://detect.roboflow.com/schluessel_ai_classification_2/1"
             api_key = st.secrets["API_KEY"]
 
@@ -31,33 +31,13 @@ if uploaded_file:
                 st.stop()
 
             upload_result = response_upload.json()
-            image_url = upload_result.get("image", {}).get("url")
 
-            if not image_url:
-                st.error("Fehler beim Abrufen der Bild-URL.")
-                st.json(upload_result)
-                st.stop()
-
-            # Schritt 2: Bild-URL an Workflow senden (GET)
-            workflow_url = "https://infer.roboflow.com/moritz-b/custom-workflow-6"
-            response = requests.get(
-                url=f"{workflow_url}?api_key={api_key}&image={image_url}"
-            )
-
-            result = response.json()
-
-            # Debug (optional)
+            # Debug anzeigen (optional)
             # st.subheader("Rohdaten (Debug)")
-            # st.json(result)
+            # st.json(upload_result)
 
-            predictions = []
-            if isinstance(result, list):
-                if len(result) > 0 and "predictions" in result[0]:
-                    predictions = result[0]["predictions"]
-            elif "predictions" in result:
-                predictions = result["predictions"]
-
-            if predictions and len(predictions) > 0:
+            predictions = upload_result.get("predictions", [])
+            if predictions:
                 top_prediction = predictions[0]
                 confidence = round(top_prediction['confidence'] * 100, 2)
                 st.success(f"Erkannt: **{top_prediction['class']}** mit {confidence}% Sicherheit")
