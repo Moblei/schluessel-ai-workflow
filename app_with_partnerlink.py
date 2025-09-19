@@ -5,8 +5,8 @@ import requests
 
 st.set_page_config(page_title="Schlüssel-AI", layout="centered")
 
-st.title("Schlüssel-AI: Erkenne deinen Schlüsseltyp")
-st.write("Lade ein Bild deines Schlosses hoch – wir sagen dir, welcher Schlüsseltyp passt.")
+st.title("Schlüssel-AI: Verlorenen Schlüssel eimfach nachbestellen")
+st.write("Lade ein Bild deines Schlosses hoch – wir sagen dir, welcher Schlüssel passt.")
 
 uploaded_file = st.file_uploader("Bild auswählen", type=["jpg", "jpeg", "png"])
 
